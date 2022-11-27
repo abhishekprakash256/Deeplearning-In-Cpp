@@ -10,7 +10,7 @@ using namespace std ;
 
 // Where to find the MNIST dataset.
 //const char* kDataRoot = "./data";
-const char* kDataRoot = "/home/abhishek/Personal/dbms_project/pytorch_cpp/exp/fashion-mnist";
+const char* kDataRoot = "/home/abhishek/Personal/dbms_project/pytorch_cpp/exp/fashion-mnist";  // the data path for fashion mnsit 
 
 // The batch size for training.
 const int64_t kTrainBatchSize = 64;
@@ -26,19 +26,21 @@ const int64_t kLogInterval = 10;
 
 struct Net : torch::nn::Module {
   Net()
-      : conv1(torch::nn::Conv2dOptions(1, 32, /*kernel_size=*/3)),  //(in_channel, out_channel, kernel_size)
-        conv2(torch::nn::Conv2dOptions(32, 64, /*kernel_size=*/3)),
-        //conv3(torch::nn::Conv2dOptions(20,30,/*kernel_size=*/5)),  // added the layer
-        //conv4(torch::nn::Conv2dOptions(30,40,/*kernel_size=*/5)),  //added the layer
-        fc1(64*6*6, 120),
-        fc2(120, 10) {
+      : conv1(torch::nn::Conv2dOptions(1, 10, /*kernel_size=*/5)),  //(in_channel, out_channel, kernel_size)
+        conv2(torch::nn::Conv2dOptions(10, 20, /*kernel_size=*/5)),
+        conv3(torch::nn::Conv2dOptions(20,30,/*kernel_size=*/5)),  // added the layer
+        conv4(torch::nn::Conv2dOptions(30,40,/*kernel_size=*/5)),  //added the layer
+        fc1(320, 50),
+        fc2(50, 20), 
+        fc3(20,10){
     register_module("conv1", conv1);
     register_module("conv2", conv2);
-    //register_module("conv3", conv3);  //add the layer 
-    //register_module("conv4", conv4);   // add the layer 
+    register_module("conv3", conv3);  //add the layer 
+    register_module("conv4", conv4);   // add the layer 
     register_module("conv2_drop", conv2_drop);
     register_module("fc1", fc1);
     register_module("fc2", fc2);
+    register_module("fc3", fc3);
   }
 
   torch::Tensor forward(torch::Tensor x) {
@@ -47,18 +49,20 @@ struct Net : torch::nn::Module {
         torch::max_pool2d(conv2_drop->forward(conv2->forward(x)), 2));
     x = x.view({-1, 320});
     x = torch::relu(fc1->forward(x));
-    x = torch::dropout(x, /*p=*/0.5, /*training=*/is_training());
+    x = torch::dropout(x, /*p=*/0.25, /*training=*/is_training());
     x = fc2->forward(x);
+    x = fc3->forward(x);
     return torch::log_softmax(x, /*dim=*/1);
   }
 
   torch::nn::Conv2d conv1;
   torch::nn::Conv2d conv2;
-  //torch::nn::Conv2d conv3;  // register the layer 
-  //torch::nn::Conv2d conv4;  //register the layer 
+  torch::nn::Conv2d conv3;  // register the layer 
+  torch::nn::Conv2d conv4;  //register the layer 
   torch::nn::Dropout2d conv2_drop;
   torch::nn::Linear fc1;
   torch::nn::Linear fc2;
+  torch::nn::Linear fc3;
 };
 
 template <typename DataLoader>
