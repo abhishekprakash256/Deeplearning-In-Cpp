@@ -1,0 +1,3 @@
+/media/misbah/TRANSCEND/downloads/test/CMakeFiles/rebuild_cache.dir
+/media/misbah/TRANSCEND/downloads/test/CMakeFiles/DisplayImage.dir
+/media/misbah/TRANSCEND/downloads/test/CMakeFiles/edit_cache.dir
