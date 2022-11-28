@@ -9,6 +9,8 @@ using namespace std;
 #include <fstream>
 #include <string>
 #include <emmintrin.h>
+#include <cstdio>
+#include <cstring>
 
 using namespace cv;
 
@@ -321,7 +323,7 @@ double y[60000];
 
 
 
-#Fashion
+
 
 int ReverseInt (int i)
 {
@@ -333,7 +335,7 @@ int ReverseInt (int i)
     return((int)ch1<<24)+((int)ch2<<16)+((int)ch3<<8)+ch4;
 }
 
-void ReadMNIST_train_im(int NumberOfImages, int DataOfAnImage,double arr[][784])
+void Read_dataset(int NumberOfImages, int DataOfAnImage,double arr[][784])
 {
    // arr.resize(NumberOfImages,vector<double>(DataOfAnImage));
     ifstream file ("/home/misbah/Downloads/train-images-idx3-ubyte",ios::binary);
@@ -371,13 +373,20 @@ int main(int argc, char** argv)
 {
 
 
-    ReadMNIST_train_im(10000,784, X);
+    Read_dataset(10000,784, X);
+    ofstream MyFile("train-idx3-ubyte", ofstream::binary);
     // ReadMNIST_train_label(10000, y);
-    
-
-    for (int k = 0; k<5; k++)
+    int k;
+    MyFile << "0000 32 bit integer 0x00000803(2051) 000x0D2\n";
+    MyFile << "0004 32 bit integer 10000            number_of_images\n";
+    MyFile << "0008 32 bit integer 28               number of rows\n";
+    MyFile << "0012 32 bit integer 28               number of columns\n";
+                                                    
+    int offset = 17;
+    for (k = 0; k<5; k++)
     {
     	std::string name = "training_";
+        std::string data = std::to_string(offset);
     	double image[28][28];
     	int i,j;
 
@@ -385,7 +394,15 @@ int main(int argc, char** argv)
 	    for ( i = 0; i<28; i++)
 	    	for ( j = 0; j<28; j++)
 	    		// cout << i*28+j << endl;
-	    		image[i][j] = X[k][i*28+j];
+            {
+                data = data + " unsigned byte ";
+                data = data + std::to_string(X[k][i*28+j]);
+                data = data + "              pixel\n";
+                image[i][j] = X[k][i*28+j];
+                MyFile << data;
+            }
+	    		
+
 	    cv::Mat A(28,28,CV_64F);
 		std::memcpy(A.data, image, 28*28*sizeof(double));
 
@@ -394,6 +411,8 @@ int main(int argc, char** argv)
 		name = name+".jpg";
 		// cout << name << endl;
 		imwrite(name, A);
+        MyFile.close();
+
 
     }
     
