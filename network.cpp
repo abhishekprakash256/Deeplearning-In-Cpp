@@ -10,12 +10,14 @@ The offical documentation code https://pytorch.org/tutorials/advanced/cpp_fronte
 The imports 
 */
 #include <torch/torch.h>
+#include"dce_loss.cpp"
 
 #include <cstddef>
 #include <cstdio>
 #include <iostream>
 #include <string>
 #include <vector>
+
 
 using namespace std ;
 
@@ -132,8 +134,8 @@ class VGG16(nn.Module):
 struct Net : torch::nn::Module {
   Net()
       : conv1(torch::nn::Conv2dOptions(1, 64, 3)),  //(in_channel, out_channel, kernel_size)
-        conv2(torch::nn::Conv2dOptions(64, 20, 5)),
-        conv3(torch::nn::Conv2dOptions(64,64,3)),  // added the layer
+        conv2(torch::nn::Conv2dOptions(64, 20, 5)), // added the layer 
+        conv3(torch::nn::Conv2dOptions(64,20,5)),  // added the layer
         conv4(torch::nn::Conv2dOptions(128,128,3)),  //added the layer
         conv5(torch::nn::Conv2dOptions(128,256,3)),  //added the layer
         conv6(torch::nn::Conv2dOptions(256,256,3)),  //added the layer
@@ -144,12 +146,12 @@ struct Net : torch::nn::Module {
         conv11(torch::nn::Conv2dOptions(512,512,3)),  //added the layer
         conv12(torch::nn::Conv2dOptions(512,30,5)),  //added the layer
         conv13(torch::nn::Conv2dOptions(30,40,5)),  //added the layer
-        fc1(320,50),
+        fc1(320,50),  // the fully connected layer 
         fc2(50,40),
         fc3(40,20), 
         fc4(20,10){
-    register_module("conv1", conv1);
-    register_module("conv2", conv2);
+    register_module("conv1", conv1);  //add the layer
+    register_module("conv2", conv2);  // add the layer 
     register_module("conv3", conv3);  //add the layer 
     register_module("conv4", conv4);   // add the layer 
     register_module("conv6", conv6);   // add the layer 
@@ -174,7 +176,7 @@ struct Net : torch::nn::Module {
     x = torch::relu(fc1->forward(x));
     x = torch::dropout(x, 0.25,is_training());
     x = fc2->forward(x);
-    x = fc3->forward(x);
+    x = fc3->forward(x); 
     x = fc4->forward(x);
     return torch::log_softmax(x,1);
   }
@@ -192,12 +194,13 @@ struct Net : torch::nn::Module {
   torch::nn::Conv2d conv11;  //register the layer 
   torch::nn::Conv2d conv12;  //register the layer 
   torch::nn::Conv2d conv13;  //register the layer
-  torch::nn::Dropout2d conv2_drop;
-  torch::nn::Linear fc1;
+  torch::nn::Dropout2d conv2_drop;  // the dropout layer 
+  torch::nn::Linear fc1;  // fully connected layer 
   torch::nn::Linear fc2;
   torch::nn::Linear fc3;
   torch::nn::Linear fc4;
 };
+
 
 
 template <typename DataLoader>
@@ -262,6 +265,12 @@ void test(
 
 auto main() -> int {
   torch::manual_seed(1);
+
+  int num1 = 1;
+  int num2 = 2;
+  int num3;
+
+  cout<<num3<< endl;
 
   torch::DeviceType device_type;
   if (torch::cuda::is_available()) {
