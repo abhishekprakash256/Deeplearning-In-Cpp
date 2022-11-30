@@ -11,7 +11,7 @@ pytorch cpp api
 opencv cpp 
 ```
 
-- The dataset can be downloadedfrom the following links:
+- The dataset can be downloaded from the following links:
 
   ```
   SVHN: http://ufldl.stanford.edu/housenumbers/
