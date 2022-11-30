@@ -77,6 +77,9 @@ opencv cpp
 - The display image part 
 
   ![](display_image.png)
+  
+- The framework
+  ![](framework.png)
 
 ### Links
 
