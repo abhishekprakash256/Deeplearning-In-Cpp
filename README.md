@@ -79,7 +79,7 @@ opencv cpp
   ![](display_image.png)
   
 - The framework
-  ![](framework.png)
+  ![](frame_work.png)
 
 ### Links
 
