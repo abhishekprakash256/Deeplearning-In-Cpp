@@ -11,17 +11,17 @@ pytorch cpp api
 opencv cpp 
 ```
 
-- The dataset can be downloaded with data_download.py 
+- The dataset can be downloadedfrom the following links:
 
   ```
-  SVHN: <http://ufldl.stanford.edu/housenumbers/>
+  SVHN: http://ufldl.stanford.edu/housenumbers/
   CIFAR10: https://www.cs.toronto.edu/~kriz/cifar.html
   LSUN: https://www.yf.io/p/lsun
   CINIC: https://www.kaggle.com/datasets/mengcius/cinic10
   20NewsGroup: http://qwone.com/~jason/20Newsgroups/
   ```
 
-- The dataset downloaded in the ubyte format 
+- The dataset downloaded in the ubyte format, csv or zipped format. We have our own stream generation code to generate data stream. 
 
 - Edit the data path in the network.cpp file and after_trainer.cpp file 
 
@@ -63,7 +63,10 @@ opencv cpp
 - For the data stream generator run the commands as follows to generate the executable file 
 
   ```bash
-  make 
+  cd stream_generation
+  cmake .
+  make
+  ./DisplayImage
   ```
 
 - The command will generate the DisplayImage file 
