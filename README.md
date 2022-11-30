@@ -60,7 +60,7 @@ opencv cpp
   const int64_t unlablled_data = 5;
   ```
 
-- For the data stream generator run the commands as follows to generate the executable file 
+- For the data stream generator, install OpenCV C++ from https://www.geeksforgeeks.org/how-to-install-opencv-in-c-on-linux/. Then run the commands as follows to generate the executable file
 
   ```bash
   cd stream_generation
