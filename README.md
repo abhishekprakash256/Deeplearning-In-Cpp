@@ -56,7 +56,13 @@ opencv cpp
   const int64_t unlablled_data = 5;
   ```
 
-  
+- For the data stream generator run the commands as follows to generate the executable file 
+
+  ```bash
+  make 
+  ```
+
+- The command will generate the DisplayImage file 
 
 ### Running Outputs 
 
@@ -67,6 +73,10 @@ opencv cpp
 - The retrainer part 
 
   ![](retrainer.png)
+
+- The display image part 
+
+  ![](display_image.png)
 
 ### Links
 
