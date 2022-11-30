@@ -11,7 +11,15 @@ The imports
 */
 #include <torch/torch.h>
 #include"dce_loss.cpp"
-
+#include <math.h> 
+#include <stdlib.h>
+#include"after_trainer.cpp"
+#include <vector>
+#include <fstream>
+#include <string>
+#include <emmintrin.h>
+#include <cstdio>
+#include <cstring>
 #include <cstddef>
 #include <cstdio>
 #include <iostream>
@@ -25,13 +33,13 @@ using namespace std ;
 const char* kDataRoot = "/home/abhishek/Personal/dbms_project/pytorch_cpp/exp/fashion-mnist";  // the data path for fashion mnsit 
 
 // The batch size for training.
-const int64_t kTrainBatchSize = 32;
+const int64_t kTrainBatchSize = 32; //make a paramter
 
 // The batch size for testing.
 const int64_t kTestBatchSize = 128;
 
 // The number of epochs to train.
-const int64_t kNumberOfEpochs = 50;
+const int64_t kNumberOfEpochs = 10;
 
 // After how many batches to log a new update with the loss value.
 const int64_t kLogInterval = 16;
@@ -129,7 +137,7 @@ class VGG16(nn.Module):
         out = self.fc2(out)
         return out
 */
-// start of the network, VGG16 
+// start of the network, the network is 13 conv layer and 4 full connected layer 
 
 struct Net : torch::nn::Module {
   Net()
@@ -147,9 +155,9 @@ struct Net : torch::nn::Module {
         conv12(torch::nn::Conv2dOptions(512,30,5)),  //added the layer
         conv13(torch::nn::Conv2dOptions(30,40,5)),  //added the layer
         fc1(320,50),  // the fully connected layer 
-        fc2(50,40),
-        fc3(40,20), 
-        fc4(20,10){
+        fc2(50,40), // the fully connected layer 
+        fc3(40,20),  // the fully connected layer 
+        fc4(20,10){  // the fully connected layer 
     register_module("conv1", conv1);  //add the layer
     register_module("conv2", conv2);  // add the layer 
     register_module("conv3", conv3);  //add the layer 
@@ -162,12 +170,14 @@ struct Net : torch::nn::Module {
     register_module("conv11", conv11);   // add the layer 
     register_module("conv12", conv12);   // add the layer
     register_module("conv13", conv13);   // add the layer      
-    register_module("conv2_drop", conv2_drop);
-    register_module("fc1", fc1);
+    register_module("conv2_drop", conv2_drop);  // the drop layer 
+    register_module("fc1", fc1);  // add the fully connected layer 
     register_module("fc2", fc2);
     register_module("fc3", fc3);
   }
 
+
+ // the forward fucntion for passing the input
   torch::Tensor forward(torch::Tensor x) {
     x = torch::relu(torch::max_pool2d(conv1->forward(x), 2));
     x = torch::relu(
@@ -181,8 +191,8 @@ struct Net : torch::nn::Module {
     return torch::log_softmax(x,1);
   }
 
-  torch::nn::Conv2d conv1;
-  torch::nn::Conv2d conv2;
+  torch::nn::Conv2d conv1; // register the layer 
+  torch::nn::Conv2d conv2; // register the layer 
   torch::nn::Conv2d conv3;  // register the layer 
   torch::nn::Conv2d conv4;  //register the layer 
   torch::nn::Conv2d conv5;  //register the layer 
@@ -196,32 +206,48 @@ struct Net : torch::nn::Module {
   torch::nn::Conv2d conv13;  //register the layer
   torch::nn::Dropout2d conv2_drop;  // the dropout layer 
   torch::nn::Linear fc1;  // fully connected layer 
-  torch::nn::Linear fc2;
-  torch::nn::Linear fc3;
-  torch::nn::Linear fc4;
+  torch::nn::Linear fc2;  // fully connected layer 
+  torch::nn::Linear fc3;   // fully connected layer 
+  torch::nn::Linear fc4;    // fully connected layer 
 };
 
 
 
 template <typename DataLoader>
 void train(
+    /*
+    The funnction is the train function 
+    passed the model and use the train model 
+    the model is passed and the model is trained 
+    with the loss optmizer and use the DCE loss
+    */
+
+    // the initilizaton of the paramaters
     size_t epoch,
     Net& model,
     torch::Device device,
     DataLoader& data_loader,
     torch::optim::Optimizer& optimizer,
     size_t dataset_size) {
+
+  // model trainer and the loss calulater 
+  // the optimizer of the model
   model.train();
   size_t batch_idx = 0;
+  // loop the dataloader 
   for (auto& batch : data_loader) {
     auto data = batch.data.to(device), targets = batch.target.to(device);
     optimizer.zero_grad();
+    DCE_loss dce_loss;
+    int x , y , z  ;
+    torch::Tensor tensor1, tensor2 ; 
     auto output = model.forward(data);
     auto loss = torch::nll_loss(output, targets);
     AT_ASSERT(!std::isnan(loss.template item<float>()));
     loss.backward();
     optimizer.step();
 
+    // calc the loss per epoch defined 
     if (batch_idx++ % kLogInterval == 0) {
       std::printf(
           "\rTrain Epoch: %ld [%5ld/%5ld] Loss: %.4f",
@@ -235,6 +261,13 @@ void train(
 
 template <typename DataLoader>
 void test(
+    /*
+    The funnction is the test function 
+    that is used for the model to test on the data
+    the test data is used for evaluaton of the accuracy
+    */
+
+    // the paramaters for the model
     Net& model,
     torch::Device device,
     DataLoader& data_loader,
@@ -243,6 +276,9 @@ void test(
   model.eval();
   double test_loss = 0;
   int32_t correct = 0;
+
+  // run the loop on the batch for the test data
+  // calculate the accuracy 
   for (const auto& batch : data_loader) {
     auto data = batch.data.to(device), targets = batch.target.to(device);
     auto output = model.forward(data);
@@ -256,6 +292,7 @@ void test(
     correct += pred.eq(targets).sum().template item<int64_t>();
   }
 
+  //generate the test loss as per dataset_size
   test_loss /= dataset_size;
   std::printf(
       "\nTest set: Average loss: %.4f | Accuracy: %.3f\n",
@@ -264,14 +301,14 @@ void test(
 }
 
 auto main() -> int {
-  torch::manual_seed(1);
+    /*
+    The main function used for the trainer of the model
+    the test function is also called and tested on the data
+    the data is loaded from the dataloader class
+    */
+  torch::manual_seed(1); // set the seed 
 
-  int num1 = 1;
-  int num2 = 2;
-  int num3;
-
-  cout<<num3<< endl;
-
+  // make the device use the device available 
   torch::DeviceType device_type;
   if (torch::cuda::is_available()) {
     std::cout << "CUDA available! Training on GPU." << std::endl;
@@ -285,6 +322,7 @@ auto main() -> int {
   Net model;
   model.to(device);
 
+  // the dataloader using the torch methods 
   auto train_dataset = torch::data::datasets::MNIST(kDataRoot)
                            .map(torch::data::transforms::Normalize<>(0.1307, 0.3081))
                            .map(torch::data::transforms::Stack<>());
@@ -293,6 +331,8 @@ auto main() -> int {
       torch::data::make_data_loader<torch::data::samplers::SequentialSampler>(
           std::move(train_dataset), kTrainBatchSize);
 
+
+  // the test data loader 
   auto test_dataset = torch::data::datasets::MNIST(
                           kDataRoot, torch::data::datasets::MNIST::Mode::kTest)
                           .map(torch::data::transforms::Normalize<>(0.1307, 0.3081))
@@ -301,11 +341,20 @@ auto main() -> int {
   auto test_loader =
       torch::data::make_data_loader(std::move(test_dataset), kTestBatchSize);
 
+
+  // available inbuild optimizer for the model using the stochastic gradient descent
   torch::optim::SGD optimizer(
       model.parameters(), torch::optim::SGDOptions(0.01).momentum(0.5));
 
+  // run the model as per epochs
   for (size_t epoch = 1; epoch <= kNumberOfEpochs; ++epoch) {
     train(epoch, model, device, *train_loader, optimizer, train_dataset_size);
     test(model, device, *test_loader, test_dataset_size);
   }
+ 
+ //The  main trainer function for the retrainer 
+  main_trainer();
 }
+
+
+
