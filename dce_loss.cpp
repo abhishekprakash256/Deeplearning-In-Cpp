@@ -1,35 +1,9 @@
 /*
-The DCE loss of the model 
+The DCE loss of the model from the paper 
 Loss(DCE) = − log P(yi|x) = − log(
 K j
 =1
 P(x ∈ pij|x))
-
-// 
-
-class DCELoss(nn.Module):
-    def __init__(self, gamma=0.1):
-        super().__init__()
-
-        self.gamma = gamma
-    compute_distance = nn.PairwiseDistance(p=2, eps=1e-6)
-
-    def forward(self, feature, prototype, prototypes):
-        # distances = compute_multi_distance(feature, prototypes.cat(label))
-        distance = compute_distance(feature, prototype.feature)
-        prob = (-self.gamma * distance.pow(2)).exp().sum()
-        # prob = (-self.gamma * distances).exp().sum()
-
-        distances = compute_multi_distance(feature, prototypes.cat())
-        one = (-self.gamma * distances.pow(2)).exp().sum()
-        # one = (-self.gamma * distances).exp().sum()
-
-        dce_loss = -(prob / one).log()
-
-        # prob = probability(feature, label, prototypes, gamma=self.gamma)
-        # dce_loss = -prob.log()
-
-        return dce_loss
 
 */
 
@@ -42,25 +16,29 @@ using namespace std;
 
 class DCE_loss
 {
-    public:
-        int num1;
-        int num2;
+public:
     
     int feed_network(int features, int prototypes, int classes,torch::Tensor tensor1, torch::Tensor tensor2 )
-    {
+    /*The method feed_network is for the caculationo  of the DCE loss from the network 
+    and use this to feed in to the model, the model takes the paramater and calculate the loss 
+    */
+    {   /*
+        the defualt paramters are passed 
+        */
         int diff,prob, one, sum_arr;
         torch::Tensor out;   
         int dist,eps,p,dist_mul ;
         int prodtype[20];
         p = 6;
         int tensor3,tensor4;
-        //torch at::sum;
         int gamma = 0.6;
         int i=0,j=0;
         int sum1, sum2;
         sum1 = 0,sum2 = 0;
         int M,N; 
         int final_loss;
+
+        // the sum calulation for tensor 
         for (i = 0; i < M; ++i) {
             for (j = 0; j < N; ++j) {
                 int val1;
@@ -77,6 +55,8 @@ class DCE_loss
             }
         } 
 
+        // calculate the diff for the distances 
+        
         if (sum1 > sum2)
         {
             diff = (sum1 - sum2);
@@ -112,8 +92,10 @@ class DCE_loss
         int log_val ;
         int div;
 
+        //calulate the div
         div = -(prob/one);
 
+        //take the log 
         log_val = log10(div);
 
         final_loss = log_val;
