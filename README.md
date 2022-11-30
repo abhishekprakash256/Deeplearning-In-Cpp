@@ -14,7 +14,7 @@ opencv cpp
 - The dataset can be downloaded with data_download.py 
 
   ```
-  SVHN: <http://ufldl.stanford.edu/housenumbers/>
+  SVHN: http://ufldl.stanford.edu/housenumbers/
   CIFAR10: https://www.cs.toronto.edu/~kriz/cifar.html
   LSUN: https://www.yf.io/p/lsun
   CINIC: https://www.kaggle.com/datasets/mengcius/cinic10
