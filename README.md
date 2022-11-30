@@ -62,11 +62,11 @@ opencv cpp
 
 - The compiling and running 
 
-  ![](/home/abhishek/Personal/dbms_project/pytorch_cpp/exp/output.png)
+  ![](output.png)
 
 - The retrainer part 
 
-  ![](/home/abhishek/Personal/dbms_project/pytorch_cpp/exp/retrainer.png)
+  ![](retrainer.png)
 
 ### Links
 
