@@ -2,7 +2,7 @@
 
 ### Description -
 
-The project is about the implementation of the stream classification problem , that deals with the unclassified data labels on the stream of the data , by using the algorithms that are defined in the paper , that uses the butter memory to store the values and use that to retrain the model again on the novel classes
+The project is about the implementation of the stream classification problem , that deals with the unclassified data labels on the stream of the data , by using the algorithms that are defined in the paper , that uses the butter memory to store the values and use that to retrain the model again on the novel classes. The sample datasets are given in the data folder.
 
 ### Requirements -
 
