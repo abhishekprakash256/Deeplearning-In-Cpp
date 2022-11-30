@@ -35,7 +35,7 @@ opencv cpp
 
 - The CMakeLists.txt file has the dependencies for the file 
 
-- Add the path for libtorch (pytorch api) in the file and edit the executable file if needed 
+- Add the path for libtorch (pytorch api) in the file and edit the executable file if needed (follow https://pytorch.org/cppdocs/installing.html )
 
 -  Use the command 
 
