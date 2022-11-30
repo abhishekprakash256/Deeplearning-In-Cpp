@@ -14,7 +14,11 @@ opencv cpp
 - The dataset can be downloaded with data_download.py 
 
   ```
-  python3 data_download.py
+  SVHN: http://ufldl.stanford.edu/housenumbers/
+  CIFAR10: https://www.cs.toronto.edu/~kriz/cifar.html
+  LSUN: https://www.yf.io/p/lsun
+  CINIC: https://www.kaggle.com/datasets/mengcius/cinic10
+  20NewsGroup: http://qwone.com/~jason/20Newsgroups/
   ```
 
 - The dataset downloaded in the ubyte format 
