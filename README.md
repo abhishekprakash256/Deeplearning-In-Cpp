@@ -96,3 +96,9 @@ https://opencv.org/opencv-4-0/
 https://pytorch.org/cppdocs/installing.html
 ```
 
+
+- To run the experiment on CIFAR10:
+  ```bash
+  cd Experiment_CIFAR10
+  make
+  ```
