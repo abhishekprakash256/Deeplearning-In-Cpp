@@ -33,7 +33,7 @@ int main()
 
     float mnew = count/1000.0;
 
-    std::cout << "M_new: " << mnew << endl;
+    std::cout << "F_new: " << mnew << endl;
 
     return 0;
 }
