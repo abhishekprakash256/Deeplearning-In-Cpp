@@ -97,8 +97,8 @@ https://pytorch.org/cppdocs/installing.html
 ```
 
 
-- To run the experiment on CIFAR10:
+- To run the experiment on FASHION-MNIST:
   ```bash
-  cd Experiment_CIFAR10
+  cd Experiment_FASHION
   make
   ```
